@@ -1,0 +1,36 @@
+<%= form_with(model: [@patient, @medicine_schedule], local: true) do |form| %>
+  <% if @medicine_schedule.errors.any? %>
+    <div id="error_explanation">
+      <div class="alert alert-danger">
+        <h2><%= pluralize(@medicine_schedule.errors.count, "error") %> prohibited this medicine schedule from being saved:</h2>
+        <ul>
+          <% @medicine_schedule.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    </div>
+  <% end %>
+
+  <div class="mb-3">
+    <%= form.label :disease, class: "form-label" %>
+    <%= form.text_field :disease, class: "form-control", required: true, placeholder: "Enter new disease" %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :start_date, class: "form-label" %>
+    <%= form.date_field :start_date, class: "form-control", required: true %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :end_date, class: "form-label" %>
+    <%= form.date_field :end_date, class: "form-control" %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :status, class: "form-label" %>
+    <%= form.select :status, [['Active', 'active'], ['Inactive', 'inactive']], {}, class: 'form-control' %>
+  </div>
+
+  <%= form.submit class: "btn btn-primary" %>
+<% end %>

@@ -1,0 +1,45 @@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+<h1>Patient Details</h1>
+
+<div class="card">
+  <div class="card-body">
+    <h5 class="card-title"><%= @patient.name %></h5>
+    <p class="card-text"><strong>Email:</strong> <%= @patient.email %></p>
+    <p class="card-text"><strong>Time Zone:</strong> <%= @patient.time_zone %></p>
+    <p class="card-text"><strong>Status:</strong> <%= @patient.status %></p>
+  </div>
+</div>
+
+<%= link_to "Edit", edit_patient_path(@patient), class: "btn btn-primary mt-3" %>
+<%= link_to "Back", patients_path, class: "btn btn-secondary mt-3 ms-2" %>
+<%= link_to "Add Medicine Schedule", new_patient_medicine_schedule_path(@patient), class: "btn btn-success mt-3 ms-2" %>
+
+<% if @patient.medicine_schedules.any? %>
+  <h2>Medicine Schedules</h2>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Disease</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @patient.medicine_schedules.each do |medicine_schedule| %>
+        <tr>
+          <td><%= medicine_schedule.disease %></td>
+          <td>
+            <%= link_to "Edit", edit_patient_medicine_schedule_path(@patient, medicine_schedule), class: "btn btn-primary btn-sm" %>
+            <%= link_to "Show", patient_medicine_schedule_path(@patient, medicine_schedule), class: "btn btn-info btn-sm" %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <p>This patient has no medicine schedules yet.</p>
+<% end %>
+
+
+<script type="text/javascript">
+  
+</script>

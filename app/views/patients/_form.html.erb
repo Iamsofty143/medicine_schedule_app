@@ -1,0 +1,39 @@
+<%= form_with(model: @patient, local: true) do |form| %>
+  <% if @patient.errors.any? %>
+    <div id="error_explanation">
+      <div class="alert alert-danger">
+        <h2><%= pluralize(@patient.errors.count, "error") %> prohibited this patient from being saved:</h2>
+        <ul>
+          <% @patient.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    </div>
+  <% end %>
+
+  <div class="mb-3">
+    <%= form.label :name, class: "form-label" %>
+    <%= form.text_field :name, class: "form-control", required: true %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :email, class: "form-label" %>
+    <%= form.email_field :email, class: "form-control", required: true %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :time_zone, class: "form-label" %>
+    <%= form.select :time_zone, ActiveSupport::TimeZone.all.map { |tz| [tz.name, tz.name] }, { include_blank: true }, class: "form-select" %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :status, class: "form-label" %>
+    <%= form.select :status, [['Active', 'active'], ['Died', 'died'], ['Inactive', 'inactive']], { include_blank: true }, class: "form-select" %>
+  </div>
+
+  <hr class="my-4">
+
+  <%= form.submit class: "btn btn-primary btn-lg" %>
+  <%= link_to "Cancel", patients_path, class: "btn btn-secondary btn-lg ms-2" %>
+<% end %>

@@ -1,0 +1,24 @@
+<h1>Medicine Details</h1>
+
+<% @medicine_schedule.medicines.each do |medicine| %>
+  <div class="card">
+    <div class="card-body">
+      <p><strong>Name:</strong> <%= medicine.name %></p>
+      <p><strong>Frequency:</strong> <%= medicine.frequency %></p>
+      <p><strong>Number of Frequency:</strong> <%= medicine.number_of_frequency %></p>
+      <p><strong>Number of Pill:</strong> <%= medicine.number_of_pill %></p>
+      <p><strong>Set of Time:</strong> <%= medicine.set_of_time %></p>
+      <p><strong>Schedule:</strong></p>
+      <ul>
+        <% if medicine.schedule.present? %>
+          <% medicine.schedule.each do |day, times| %>
+            <li><strong><%= day.capitalize %>:</strong> <%= times.join(", ") %></li>
+          <% end %>
+        <% else %>
+          <li>No schedule available</li>
+        <% end %>
+      </ul>
+      <%= link_to "Edit", edit_patient_medicine_schedule_medicine_path(@patient, @medicine_schedule, medicine), class: "btn btn-primary" %>
+    </div>
+  </div>
+<% end %>

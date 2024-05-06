@@ -1,0 +1,32 @@
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  # For details on connection pooling, see Rails configuration guide
+  # https://guides.rubyonrails.org/configuring.html#database-pooling
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  username: eco_driver
+  password: eco_driver
+  host: localhost
+
+development:
+  <<: *default
+  database: medicine_schedule
+  username: eco_driver
+  password: eco_driver
+  host: localhost
+
+  
+test:
+  <<: *default
+  database: medicine_schedule_test
+  username: eco_driver
+  password: eco_driver
+  host: localhost
+
+
+production:
+  <<: *default
+  database: eco_driver
+  username: eco_driver
+  password: <%= ENV['BOOKS_BUDDY_DATABASE_PASSWORD'] %>
+  

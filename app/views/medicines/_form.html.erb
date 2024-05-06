@@ -1,0 +1,166 @@
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/
+bootstrap.bundle.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+<%= form_with(model: [@patient, @medicine_schedule, @medicine], local: true) do |form| %>
+  <% if @medicine.errors.any? %>
+    <div id="error_explanation">
+      <div class="alert alert-danger">
+        <h2><%= pluralize(@medicine.errors.count, "error") %> prohibited this medicine from being saved:</h2>
+        <ul>
+          <% @medicine.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    </div>
+  <% end %>
+
+  <div class="mb-3">
+    <%= form.label :name, class: "form-label" %>
+    <%= form.text_field :name, class: "form-control", required: true %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :number_of_frequency, class: "form-label" %>
+    <%= form.number_field :number_of_frequency, class: "form-control", required: true %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :number_of_pill, class: "form-label" %>
+    <%= form.number_field :number_of_pill, class: "form-control", required: true %>
+  </div>
+
+ <% byebug %>
+<% @slot_type.each do |day| %>
+    <label class="btn btn-outline-primary">
+      <%= day.capitalize %>
+      <!-- Add Time Slot button for each day -->
+      <div id="<%= day %>_slots" style="display: none;"></div>
+      <%= button_tag "Add Time Slot", type: "button", class: "btn btn-outline-secondary add-time-slot-btn", style: "display:block;", id: "#{day}_add_time_slot", data: { day: day } %>
+    </label>
+  <% end %>
+
+  <div class="mb-3" id="schedule_display">
+    <!-- Schedule data will be displayed here -->
+  </div>
+
+  <button id="clear_button" class="btn btn-danger" style="display: none;">Clear Schedule</button>
+
+  <%= form.hidden_field :schedule, id: "schedule_hidden_field" %>
+
+  <%= form.hidden_field :frequency, value: @frequency %>
+
+  <div class="mb-3">
+    <%= form.label :status, class: "form-label" %>
+    <%= form.select :status, options_for_select(["active", "inactive"], selected: @medicine.status), {}, class: "form-select", required: true %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :start_date, class: "form-label" %>
+    <%= form.date_field :start_date, class: "form-control" %>
+  </div>
+
+  <%= form.submit class: "btn btn-primary", onclick: "updateHiddenField()" %>
+<% end %>
+
+<% @slot_type.each do |day| %>
+  <div class="modal fade" id="<%= day %>_modal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Add Time Slot for <%= day.capitalize %></h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <!-- Clock widget goes here -->
+          <input type="time" id="<%= day %>_time" class="form-control">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary add-time-button" data-day="<%= day %>">Add Time</button>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>
+<script>
+
+  let scheduleData = {};
+
+  document.addEventListener("DOMContentLoaded", function() {
+    // Handle click event for Add Time Slot button
+    const addTimeButtons = document.querySelectorAll(".add-time-slot-btn");
+    addTimeButtons.forEach(button => {
+      button.addEventListener("click", function() {
+        const day = this.getAttribute("data-day");
+        const modalId = `#${day}_modal`;
+        $(modalId).modal("show");
+      });
+    });
+
+    const addTimeModalButtons = document.querySelectorAll(".add-time-button");
+    addTimeModalButtons.forEach(button => {
+      button.addEventListener("click", function() {
+        const day = this.getAttribute("data-day");
+
+        const timeInput = document.getElementById(`${day}_time`);
+        const selectedTime = timeInput.value;
+         if (!scheduleData[day]) {
+            scheduleData[day] = [selectedTime];
+          } else {
+            scheduleData[day].push(selectedTime);
+          }
+        const slotDisplay = document.getElementById(`${day}_slots`);
+        slotDisplay.textContent += selectedTime + " ";
+        // Close the modal after adding time
+        $(`#${day}_modal`).modal("hide");
+        // Clear the time input field
+        timeInput.value = "";
+        console.log(scheduleData);
+        updateScheduleDisplay();
+      });
+    });
+  });
+
+
+
+  function updateScheduleDisplay() {
+      const scheduleDisplay = document.getElementById("schedule_display");
+
+      scheduleDisplay.innerHTML = "";
+
+      const list = document.createElement("ul");
+
+      for (const day in scheduleData) {
+        const listItem = document.createElement("li");
+        listItem.textContent = `${day}: ${scheduleData[day].join(", ")}`;
+        
+        list.appendChild(listItem);
+      }
+
+      scheduleDisplay.appendChild(list);
+      toggleClearButtonVisibility();
+   }
+
+  document.getElementById("clear_button").addEventListener("click", function() {
+      scheduleData = {};
+
+      updateScheduleDisplay();
+      toggleClearButtonVisibility();
+    });
+
+  function toggleClearButtonVisibility() {
+    const clearButton = document.getElementById("clear_button");
+    clearButton.style.display = Object.keys(scheduleData).length > 0 ? "block" : "none";
+  }
+
+  function updateHiddenField() {
+    const hiddenField = document.getElementById("schedule_hidden_field");
+
+    hiddenField.value = JSON.stringify(scheduleData);
+  }
+
+</script>
+
