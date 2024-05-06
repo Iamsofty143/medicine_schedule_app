@@ -32,7 +32,6 @@ bootstrap.bundle.min.js"></script>
     <%= form.number_field :number_of_pill, class: "form-control", required: true %>
   </div>
 
- <% byebug %>
 <% @slot_type.each do |day| %>
     <label class="btn btn-outline-primary">
       <%= day.capitalize %>
